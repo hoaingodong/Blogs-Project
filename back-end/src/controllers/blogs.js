@@ -21,7 +21,7 @@ blogsRouter.get("/:id", middleware.tokenValidator, async (request, response) => 
 	}
 })
 
-blogsRouter.post("/", middleware.tokenValidator, middleware.userExtractor, async (request, response, next) => {
+blogsRouter.post("/", middleware.blogValidation, middleware.tokenValidator, middleware.userExtractor, async (request, response, next) => {
 	const body = request.body
 
 	const user = request.user

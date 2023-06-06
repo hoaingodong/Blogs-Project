@@ -13,7 +13,7 @@ commentsRouter.get("/", middleware.tokenValidator, middleware.userExtractor, (re
 		})
 })
 
-commentsRouter.post("/", middleware.tokenValidator, middleware.userExtractor, async (request, response, next) => {
+commentsRouter.post("/", middleware.commentValidation, middleware.tokenValidator, middleware.userExtractor, async (request, response, next) => {
 	const body = request.body
 
 	const user = request.user

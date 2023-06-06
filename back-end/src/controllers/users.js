@@ -3,22 +3,18 @@ const usersRouter = require("express").Router()
 const User = require("../models/user")
 const middleware = require("../utils/middleware")
 
-usersRouter.post("/", async (request, response, next) => {
-	const { username, name, email, avatar, role, password } = request.body
-
-	if (request.body.password.length < 3) {
-		return response.status(400).json({ error: "User validation failed: username: Path password is shorter than the minimum allowed length (3)" })
-	}
+usersRouter.post("/", middleware.userValidation, async (request, response, next) => {
+	const body = request.body
 
 	const saltRounds = 10
-	const passwordHash = await bcrypt.hash(password, saltRounds)
+	const passwordHash = await bcrypt.hash(body.password, saltRounds)
 
 	const user = new User({
-		username,
-		name,
-		email,
-		avatar,
-		role,
+		username: body.username,
+		name: body.name,
+		email: body.email,
+		avatar: body.avatar,
+		role: body.role,
 		passwordHash,
 	})
 

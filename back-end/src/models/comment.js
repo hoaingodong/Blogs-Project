@@ -1,8 +1,8 @@
 const mongoose = require("mongoose")
 
 const commentSchema = new mongoose.Schema({
-	content: {type: String, required: true},
-	stars: {type: Number , default: 5},
+	content: String,
+	stars: Number,
 	user: {
 		type: mongoose.Schema.Types.ObjectId,
 		ref: "User"
