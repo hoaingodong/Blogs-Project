@@ -1,7 +1,7 @@
 const commentsRouter = require("express").Router()
-const Comment = require("../models/comment")
+const Comment = require("../models/comment.model")
 const middleware = require("../utils/middleware")
-const Blog = require("../models/blog")
+const Blog = require("../models/blog.model")
 
 commentsRouter.get("/", middleware.tokenValidator, middleware.userExtractor, (request, response) => {
 
