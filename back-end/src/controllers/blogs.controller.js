@@ -1,6 +1,12 @@
 const blogsRouter = require("express").Router()
 const Blog = require("../models/blog.model")
 const middleware = require("../utils/middleware")
+const { celebrate, Segments } = require("celebrate")
+const BodyParser = require("body-parser")
+const blogSchema = require("../validation/blog.validation")
+const commentSchema = require("../validation/comment.validation")
+
+blogsRouter.use(BodyParser.json())
 
 blogsRouter.get("/", middleware.tokenValidator, middleware.userExtractor, (request, response) => {
 
@@ -14,6 +20,7 @@ blogsRouter.get("/", middleware.tokenValidator, middleware.userExtractor, (reque
 
 blogsRouter.get("/:id", middleware.tokenValidator, async (request, response) => {
 	const blog = await Blog.findById(request.params.id)
+
 	if (blog) {
 		response.json(blog)
 	} else {
@@ -21,11 +28,11 @@ blogsRouter.get("/:id", middleware.tokenValidator, async (request, response) => 
 	}
 })
 
-blogsRouter.post("/", middleware.blogValidation, middleware.tokenValidator, middleware.userExtractor, async (request, response, next) => {
+blogsRouter.post("/", celebrate({
+	[Segments.BODY]:blogSchema}), middleware.tokenValidator, middleware.userExtractor, async (request, response, next) => {
+
 	const body = request.body
-
 	const user = request.user
-
 	const blog = new Blog({
 		title: body.title,
 		content: body.content,

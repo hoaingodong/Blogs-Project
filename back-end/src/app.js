@@ -9,6 +9,7 @@ const loginRouter = require("./controllers/login.controller")
 const blogsRouter = require("./controllers/blogs.controller")
 const usersRouter = require("./controllers/users.controller")
 const commentsRouter = require("./controllers/comments.controller")
+const {errors} = require("celebrate")
 
 mongoose.set("strictQuery", false)
 
@@ -32,6 +33,7 @@ app.use("/api/users", usersRouter)
 app.use("/api/login", loginRouter)
 app.use("/api/blogs", blogsRouter)
 app.use("/api/comments", commentsRouter)
+app.use(errors())
 
 app.use(middleware.unknownEndpoint)
 app.use(middleware.errorHandler)

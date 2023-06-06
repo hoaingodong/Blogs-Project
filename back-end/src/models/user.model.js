@@ -12,7 +12,10 @@ const userSchema = mongoose.Schema({
 		unique: true
 	},
 	avatar:	String,
-	role: String,
+	role: {
+		type: String,
+		default: "USER"
+	},
 	passwordHash: String,
 	blogs: [
 		{

@@ -2,6 +2,11 @@ const commentsRouter = require("express").Router()
 const Comment = require("../models/comment.model")
 const middleware = require("../utils/middleware")
 const Blog = require("../models/blog.model")
+const { celebrate, Segments } = require("celebrate")
+const BodyParser = require("body-parser")
+const commentSchema = require("../validation/comment.validation")
+
+commentsRouter.use(BodyParser.json())
 
 commentsRouter.get("/", middleware.tokenValidator, middleware.userExtractor, (request, response) => {
 
@@ -13,11 +18,10 @@ commentsRouter.get("/", middleware.tokenValidator, middleware.userExtractor, (re
 		})
 })
 
-commentsRouter.post("/", middleware.commentValidation, middleware.tokenValidator, middleware.userExtractor, async (request, response, next) => {
+commentsRouter.post("/",  celebrate({
+	[Segments.BODY]:commentSchema}), middleware.tokenValidator, middleware.userExtractor, async (request, response, next) => {
 	const body = request.body
-
 	const user = request.user
-
 	const blog = await Blog.findById(body.blog_id)
 
 	if (!blog) {
