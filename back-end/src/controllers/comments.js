@@ -63,7 +63,7 @@ commentsRouter.delete("/:id", middleware.tokenValidator, middleware.userExtracto
 	}
 })
 
-commentsRouter.put("/:id", middleware.tokenValidator, middleware.userExtractor, (request, response, next) => {
+commentsRouter.put("/:id", middleware.tokenValidator, (request, response, next) => {
 	const body = request.body
 
 	const comment = {

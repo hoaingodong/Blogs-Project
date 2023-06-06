@@ -12,7 +12,7 @@ blogsRouter.get("/", middleware.tokenValidator, middleware.userExtractor, (reque
 		})
 })
 
-blogsRouter.get("/:id", middleware.tokenValidator, middleware.userExtractor,async (request, response) => {
+blogsRouter.get("/:id", middleware.tokenValidator, async (request, response) => {
 	const blog = await Blog.findById(request.params.id)
 	if (blog) {
 		response.json(blog)
@@ -62,7 +62,7 @@ blogsRouter.delete("/:id", middleware.tokenValidator, middleware.userExtractor, 
 	}
 })
 
-blogsRouter.put("/:id", middleware.tokenValidator, middleware.userExtractor, (request, response, next) => {
+blogsRouter.put("/:id", middleware.tokenValidator, (request, response, next) => {
 	const body = request.body
 
 	const blog = {
