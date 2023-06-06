@@ -1,5 +1,5 @@
 const blogsRouter = require("express").Router()
-const Blog = require("../models/blog")
+const Blog = require("../models/blog.model")
 const middleware = require("../utils/middleware")
 
 blogsRouter.get("/", middleware.tokenValidator, middleware.userExtractor, (request, response) => {

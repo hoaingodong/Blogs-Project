@@ -1,6 +1,6 @@
 const logger = require("./logger")
 const jwt = require("jsonwebtoken")
-const User = require("../models/user")
+const User = require("../models/user.model")
 const Joi = require("joi")
 
 const requestLogger = (request, response, next) => {

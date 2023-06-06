@@ -1,6 +1,6 @@
 const bcrypt = require("bcryptjs")
 const usersRouter = require("express").Router()
-const User = require("../models/user")
+const User = require("../models/user.model")
 const middleware = require("../utils/middleware")
 
 usersRouter.post("/", middleware.userValidation, async (request, response, next) => {
