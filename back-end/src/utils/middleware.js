@@ -1,7 +1,6 @@
 const logger = require("./logger")
 const jwt = require("jsonwebtoken")
 const User = require("../models/user.model")
-const Joi = require("joi")
 
 const requestLogger = (request, response, next) => {
 	logger.info("Method:", request.method)
@@ -65,68 +64,9 @@ const tokenValidator = (request, response, next) => {
 const userExtractor = async (request, response, next) => {
 	const token = request.token
 	const decodedToken = jwt.verify(token, process.env.SECRET)
-
 	const user = await User.findById(decodedToken.id)
 	request["user"] = user
 	next()
-}
-
-const userValidation = async (request, response, next) =>{
-
-	const userSchema = Joi.object().keys({
-		username: Joi.string().alphanum().required().min(8),
-		name: Joi.string().required(),
-		email: Joi.string().email({ minDomainSegments: 2, tlds: { allow: ["com", "net", "org"] } }),
-		avatar: Joi.string().required(),
-		role: Joi.string().required().valid("ADMIN", "USER"),
-		password: Joi.string().pattern(new RegExp("^[a-zA-Z0-9]{3,30}$")),
-		repeat_password: Joi.ref("password"),
-	})
-	const { error } = userSchema.validate(request.body)
-	const valid = error == null
-	if (valid) {
-		next()
-	} else {
-		const { details } = error
-		const message = details.map(i => i.message).join(",")
-		console.log("error", message)
-		response.status(422).json({ error: message }) }
-}
-
-const blogValidation = async (request, response, next) =>{
-
-	const blogSchema = Joi.object().keys({
-		title: Joi.string().required(),
-		content: Joi.string().required(),
-		likes: Joi.number().default(0),
-	})
-	const { error } = blogSchema.validate(request.body)
-	const valid = error == null
-	if (valid) {
-		next()
-	} else {
-		const { details } = error
-		const message = details.map(i => i.message).join(",")
-		console.log("error", message)
-		response.status(422).json({ error: message }) }
-}
-
-const commentValidation = async (request, response, next) =>{
-
-	const commentSchema = Joi.object().keys({
-		content: Joi.string().required(),
-		stars: Joi.number().default(5),
-		blog_id: Joi.string().required()
-	})
-	const { error } = commentSchema.validate(request.body)
-	const valid = error == null
-	if (valid) {
-		next()
-	} else {
-		const { details } = error
-		const message = details.map(i => i.message).join(",")
-		console.log("error", message)
-		response.status(422).json({ error: message }) }
 }
 
 module.exports = {
@@ -136,7 +76,4 @@ module.exports = {
 	tokenExtractor,
 	tokenValidator,
 	userExtractor,
-	userValidation,
-	blogValidation,
-	commentValidation
 }

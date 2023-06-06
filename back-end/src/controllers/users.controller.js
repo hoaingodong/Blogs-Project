@@ -2,8 +2,15 @@ const bcrypt = require("bcryptjs")
 const usersRouter = require("express").Router()
 const User = require("../models/user.model")
 const middleware = require("../utils/middleware")
+const { celebrate, Segments } = require("celebrate")
+const BodyParser = require("body-parser")
+const userSchema = require("../validation/user.validation")
 
-usersRouter.post("/", middleware.userValidation, async (request, response, next) => {
+usersRouter.use(BodyParser.json())
+
+usersRouter.post("/", celebrate({
+	[Segments.BODY]:userSchema}), async (request, response, next) => {
+
 	const body = request.body
 
 	const saltRounds = 10
@@ -27,5 +34,6 @@ usersRouter.get("/", middleware.tokenValidator, async (request, response) => {
 	const users = await User.find({}).populate("blogs").populate("comments")
 	response.json(users)
 })
+
 
 module.exports = usersRouter
