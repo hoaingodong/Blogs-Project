@@ -29,7 +29,13 @@ const errorHandler = (error, request, response, next) => {
 		return response.status(401).json({
 			error: "token expired"
 		})
-	} else {
+	}
+	else if (error.name === "Error") {
+		return response.status(401).json({
+			error: "Invalid password or username"
+		})
+	}
+	else {
 		return response.status(502).json({error: "Error Server"})
 	}
 	// eslint-disable-next-line no-unreachable
