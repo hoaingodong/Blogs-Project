@@ -4,10 +4,10 @@ const login = async (request, response, next)=> {
 	const { username, password } = request.body
 
 	try {
-		const token = await loginService.login(username, password)
+		const {token, user} = await loginService.login(username, password)
 		response
 			.status(200)
-			.send({token, username: username})
+			.send({token, username: user.username, name: user.name})
 	}
 	catch (exception) {
 		next(exception)

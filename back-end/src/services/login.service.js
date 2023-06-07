@@ -25,7 +25,7 @@ const login = async (username, password) => {
 		{ expiresIn: 60*60 }
 	)
 
-	return token
+	return {token, user}
 }
 
 module.exports = {
