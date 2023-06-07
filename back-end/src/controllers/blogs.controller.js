@@ -4,7 +4,6 @@ const middleware = require("../utils/middleware")
 const { celebrate, Segments } = require("celebrate")
 const BodyParser = require("body-parser")
 const blogSchema = require("../validation/blog.validation")
-const commentSchema = require("../validation/comment.validation")
 
 blogsRouter.use(BodyParser.json())
 

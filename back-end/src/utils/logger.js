@@ -1,10 +1,23 @@
-const info = (...params) => {
-	console.log(...params)
-}
+const { createLogger, format, transports } = require("winston")
 
-const error = (...params) => {
-	console.error(...params)
-}
-module.exports = {
-	info, error
-}
+module.exports = createLogger({
+	transports: [
+		new transports.File({
+			filename: "logs/error.log",
+			format:format.combine(
+				format.timestamp({format: "MMM-DD-YYYY HH:mm:ss"}),
+				format.align(),
+				format.printf(info => `${info.level}: ${[info.timestamp]}: ${info.message}`),
+			),
+			level: "error"
+		}),
+		new transports.File({
+			filename: "logs/combined.log",
+			format:format.combine(
+				format.timestamp({format: "MMM-DD-YYYY HH:mm:ss"}),
+				format.align(),
+				format.printf(info => `${info.level}: ${[info.timestamp]}: ${info.message}`),
+			),
+			level: "info"
+		})]
+})
