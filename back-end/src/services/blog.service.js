@@ -11,7 +11,7 @@ const update = async (id, blog) =>{
 }
 
 const getAll = async (user) =>{
-	const blogs = await Blog.find({}).populate("user").populate("comments").find({user })
+	const blogs = await Blog.find({user }).populate("user").populate("comments").limit(10).skip(0)
 	return blogs
 }
 

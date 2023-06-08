@@ -7,15 +7,13 @@ const getOne = async (id) => {
 }
 
 const update = async (id, comment) =>{
-	const updatedComment = await Blog.findByIdAndUpdate(id, comment)
+	const updatedComment = await Comment.findByIdAndUpdate(id, comment)
 	return updatedComment
 }
 
 const getAll = async (blog_id) =>{
-	console.log(blog_id)
-	const comments = await Comment.find({}).populate({path: "blog", match: {
-		id: blog_id
-	}})
+	const blog =  await Blog.findById(blog_id)
+	const comments = await Comment.find({blog}).populate("blog").limit(10).skip(0)
 	return comments
 }
 

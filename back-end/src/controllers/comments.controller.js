@@ -1,5 +1,4 @@
 const commentService = require("../services/comment.service")
-const blogService = require("../services/blog.service")
 const Blog = require("../models/blog.model")
 
 const getOne = async (request, response, next) => {
@@ -27,7 +26,7 @@ const update = async (request, response, next) => {
 	}
 
 	try {
-		const updatedComment = await blogService.update(id, comment)
+		const updatedComment = await commentService.update(id, comment)
 		response.json(updatedComment)
 	}
 	catch (exception) {
