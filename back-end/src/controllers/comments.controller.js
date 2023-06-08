@@ -1,85 +1,92 @@
-const commentsRouter = require("express").Router()
-const Comment = require("../models/comment.model")
-const middleware = require("../utils/middleware")
+const commentService = require("../services/comment.service")
 const Blog = require("../models/blog.model")
-const { celebrate, Segments } = require("celebrate")
-const BodyParser = require("body-parser")
-const commentSchema = require("../validation/comment.validation")
 
-commentsRouter.use(BodyParser.json())
+const getOne = async (request, response, next) => {
+	const id = request.params.id
 
-commentsRouter.get("/", middleware.tokenValidator, middleware.userExtractor, (request, response) => {
-
-	const user = request.user
-
-	Comment.populate("user").populate("blog").find({user })
-		.then(blogs => {
-			response.json(blogs)
-		})
-})
-
-commentsRouter.post("/",  celebrate({
-	[Segments.BODY]:commentSchema}), middleware.tokenValidator, middleware.userExtractor, async (request, response, next) => {
-	const body = request.body
-	const user = request.user
-	const blog = await Blog.findById(body.blog_id)
-
-	if (!blog) {
-		return response.status(400).json({error: "Blog doesn't exist"})
-	}
-
-	const comment  = new Comment({
-		content: body.content,
-		stars: body.stars,
-		user: user.id,
-		blog: blog.id
-	})
 	try {
-		const savedComment = await comment.save()
-		user.comments = user.comments.concat(savedComment._id)
-		await user.save().catch(error => next(error))
-
-		blog.comments = blog.comments.concat(savedComment._id)
-		await blog.save().catch(error => next(error))
-
-		response.json(savedComment)
-	} catch (exception) {
-		next(exception)
-	}
-})
-
-commentsRouter.delete("/:id", middleware.tokenValidator, middleware.userExtractor, async (request, response, next) => {
-	try {
-		const user = request.user
-		const commentToDelete = await Comment.findById(request.params.id)
-
-		if (!commentToDelete) {
-			return response.status(400).json({error: "Comment not found"})
-		}
-		if (commentToDelete.user._id.toString() === user._id.toString()) {
-			await Comment.findByIdAndRemove(request.params.id)
-			response.status(204).end()
+		const comment = await commentService.getOne(id)
+		if (comment) {
+			response.json(comment)
 		} else {
-			return response.status(401).json({error: "Unauthorized"})
-		}
-	} catch (exception) {
+			return response.status(400).json({error: "Comment not found"})
+		}}
+	catch (exception){
 		next(exception)
 	}
-})
+}
 
-commentsRouter.put("/:id", middleware.tokenValidator, (request, response, next) => {
+const update = async (request, response, next) => {
 	const body = request.body
-
+	// eslint-disable-next-line no-mixed-spaces-and-tabs
+	const id = request.params.id
 	const comment = {
 		content: body.content,
 		stars: body.stars,
 	}
 
-	Comment.findByIdAndUpdate(request.params.id, comment, {new: true})
-		.then(updatedComment => {
-			response.json(updatedComment)
-		})
-		.catch(error => next(error))
-})
+	try {
+		const updatedComment = await commentService.update(id, comment)
+		response.json(updatedComment)
+	}
+	catch (exception) {
+		next(exception)
+	}
+}
 
-module.exports = commentsRouter
+const getAll = async (request, response, next) =>{
+	const blog_id = request.body.blog_id
+	try {
+		const comments = await commentService.getAll(blog_id)
+		response.json(comments)
+	}
+	catch (exception){
+		next(exception)
+	}
+}
+
+const createOne = async (request, response, next) => {
+	const body = request.body
+	const user = request.user
+
+	const blog = await Blog.findById(body.blog_id)
+	if (!blog) {
+		return response.status(400).json({error: "Blog doesn't exist"})
+	}
+
+	const comment = {
+		content: body.content,
+		stars: body.stars,
+		user: user.id,
+		blog: blog.id
+	}
+
+	try {
+		const savedBlog = await commentService.createOne(comment, user, blog )
+		response.status(201).json(savedBlog)
+	} catch (exception) {
+		next(exception)
+	}
+
+}
+
+const deleteOne = async (request, response, next) => {
+	const blog_id = request.body.blog_id
+	const id = request.params.id
+	const user = request.user
+	try {
+		await commentService.deleteOne(id, user, blog_id)
+		response.status(204).json()
+	}
+	catch (exception) {
+		next(exception)
+	}
+}
+
+module.exports = {
+	getOne,
+	update,
+	getAll,
+	createOne,
+	deleteOne
+}

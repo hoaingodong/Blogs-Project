@@ -1,87 +1,87 @@
-const blogsRouter = require("express").Router()
-const Blog = require("../models/blog.model")
-const middleware = require("../utils/middleware")
-const { celebrate, Segments } = require("celebrate")
-const BodyParser = require("body-parser")
-const blogSchema = require("../validation/blog.validation")
+const blogService = require("../services/blog.service")
+const getOne = async (request, response, next) => {
 
-blogsRouter.use(BodyParser.json())
+	const id = request.params.id
 
-blogsRouter.get("/", middleware.tokenValidator, middleware.userExtractor, (request, response) => {
-
-	const user = request.user
-
-	Blog.populate("user").populate("comments").find({user })
-		.then(blogs => {
-			response.json(blogs)
-		})
-})
-
-blogsRouter.get("/:id", middleware.tokenValidator, async (request, response) => {
-	const blog = await Blog.findById(request.params.id)
-
-	if (blog) {
-		response.json(blog)
-	} else {
-		return response.status(400).json({error: "Blog not found"})
-	}
-})
-
-blogsRouter.post("/", celebrate({
-	[Segments.BODY]:blogSchema}), middleware.tokenValidator, middleware.userExtractor, async (request, response, next) => {
-
-	const body = request.body
-	const user = request.user
-	const blog = new Blog({
-		title: body.title,
-		content: body.content,
-		likes: body.likes,
-		user: user.id,
-	})
 	try {
-		const savedBlog = await blog.save()
-		user.blogs = user.blogs.concat(savedBlog._id)
-		await user.save().catch(error => next(error))
-
-		response.json(savedBlog)
-	} catch (exception) {
-		next(exception)
-	}
-})
-
-blogsRouter.delete("/:id", middleware.tokenValidator, middleware.userExtractor, async (request, response, next) => {
-	try {
-		const user = request.user
-		const blogToDelete = await Blog.findById(request.params.id)
-
-		if (!blogToDelete) {
-			return response.status(400).json({error: "Blog not found"})
-		}
-		if (blogToDelete.user._id.toString() === user._id.toString()) {
-			await Blog.findByIdAndRemove(request.params.id)
-			response.status(204).end()
+		const blog = await blogService.getOne(id)
+		if (blog) {
+			response.json(blog)
 		} else {
-			return response.status(401).json({error: "Unauthorized"})
-		}
-	} catch (exception) {
+			return response.status(404).json({error: "Blog not found"})
+		}}
+	catch(exception) {
 		next(exception)
 	}
-})
+}
 
-blogsRouter.put("/:id", middleware.tokenValidator, (request, response, next) => {
+const update = async (request, response, next) => {
 	const body = request.body
-
+	// eslint-disable-next-line no-mixed-spaces-and-tabs
+ 	const id = request.params.id
 	const blog = {
 		content: body.content,
 		title: body.title,
 		likes: body.likes,
 	}
 
-	Blog.findByIdAndUpdate(request.params.id, blog, {new: true})
-		.then(updatedBlog => {
-			response.json(updatedBlog)
-		})
-		.catch(error => next(error))
-})
+	try {
+		const updatedBlog = await blogService.update(id, blog)
+		response.json(updatedBlog)
+	}
+	catch (exception) {
+		next(exception)
+	}
+}
 
-module.exports = blogsRouter
+const getAll = async (request, response, next) =>{
+	const user = request.user
+	try {
+		const blogs = await blogService.getAll(user)
+		response.json(blogs)
+	}
+	catch (exception){
+		next(exception)
+	}
+
+}
+
+const createOne = async (request, response, next) =>{
+	const body = request.body
+	const user = request.user
+	const blog = {
+		title: body.title,
+		content: body.content,
+		likes: body.likes,
+		user: user.id,
+	}
+
+	try {
+		const savedBlog = await blogService.createOne(blog, user)
+		response.status(201).json(savedBlog)
+	} catch (exception) {
+		next(exception)
+	}
+
+}
+
+const deleteOne = async (request, response, next) => {
+	const id = request.params.id
+	const user = request.user
+	try {
+		await blogService.deleteOne(id, user)
+		response.status(204).json()
+	}
+	catch (exception) {
+		next(exception)
+	}
+
+}
+
+module.exports = {
+	getOne,
+	update,
+	getAll,
+	createOne,
+	deleteOne
+}
