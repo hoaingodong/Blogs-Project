@@ -11,7 +11,7 @@ const login = async (username, password) => {
 		: await bcrypt.compare(password, user.passwordHash)
 
 	if (!(user && passwordCorrect)) {
-		throw new Error()
+		throw new Error("invalid username or password")
 	}
 
 	const userForToken = {

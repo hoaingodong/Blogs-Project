@@ -3,7 +3,7 @@ const jwt = require("jsonwebtoken")
 const User = require("../models/user.model")
 
 const requestLogger = (request, response, next) => {
-	logger.info("Method:", request.method)
+	logger.info("Method: ", request.method)
 	logger.info("Path:  ", request.path)
 	logger.info("Body:  ", request.body)
 	logger.info("---")
@@ -32,7 +32,7 @@ const errorHandler = (error, request, response, next) => {
 	}
 	else if (error.name === "Error") {
 		return response.status(401).json({
-			error: "Invalid password or username"
+			error: error.message
 		})
 	}
 	else {
@@ -70,6 +70,9 @@ const userExtractor = async (request, response, next) => {
 	const token = request.token
 	const decodedToken = jwt.verify(token, process.env.SECRET)
 	const user = await User.findById(decodedToken.id)
+	if (!user){
+		return response.status(401).json({error: "Unauthorized"})
+	}
 	request["user"] = user
 	next()
 }

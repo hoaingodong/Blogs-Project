@@ -15,5 +15,4 @@ const login = async (request, response, next)=> {
 
 }
 
-
-module.exports = login
+module.exports = {login}

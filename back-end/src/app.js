@@ -5,12 +5,12 @@ const mongoose = require("mongoose")
 const cors = require("cors")
 const middleware = require("./utils/middleware")
 const logger = require("./utils/logger")
-const loginRouter = require("./controllers/login.controller")
-const blogsRouter = require("./controllers/blogs.controller")
+const loginRouter = require("./routes/login.route")
+const blogsRouter = require("./routes/blog.route")
 const usersRouter = require("./routes/user.route")
-const commentsRouter = require("./controllers/comments.controller")
+const commentsRouter = require("./routes/comment.route")
 const {errors} = require("celebrate")
-const bodyParser = require("body-parser");
+const bodyParser = require("body-parser")
 
 
 mongoose.set("strictQuery", false)

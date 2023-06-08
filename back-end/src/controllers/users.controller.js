@@ -25,7 +25,6 @@ const createNew = async (request, response, next) =>{
 		response.status(201).json(savedUser)
 	}
 	catch (exception) {
-		console.log(exception)
 		next(exception)
 	}
 }
