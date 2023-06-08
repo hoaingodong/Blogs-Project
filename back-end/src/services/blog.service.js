@@ -2,7 +2,7 @@ const Blog = require("../models/blog.model")
 
 const getOne = async (id) => {
 	const blog = await Blog.findById(id)
-	return (blog)
+	return blog
 }
 
 const update = async (id, blog) =>{
@@ -12,21 +12,21 @@ const update = async (id, blog) =>{
 
 const getAll = async (user) =>{
 	const blogs = await Blog.find({}).populate("user").populate("comments").find({user })
-	return (blogs)
+	return blogs
 }
 
 const createOne = async(blog, user) => {
 	const savedBlog = await Blog.create({...blog})
 	console.log(savedBlog)
 	user.blogs = user.blogs.concat(savedBlog._id)
-	user.save()
+	await user.save()
 	return savedBlog
 }
 
 const deleteOne = async(id, user ) => {
 	const blogToDelete = await Blog.findByIdAndRemove(id)
 	user.blogs = user.blogs.filter(item => String(item) !== id)
-	user.save()
+	await user.save()
 	return blogToDelete
 }
 

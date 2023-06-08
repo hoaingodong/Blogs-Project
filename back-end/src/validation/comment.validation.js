@@ -6,4 +6,8 @@ const commentSchema = Joi.object().keys({
 	blog_id: Joi.string().required()
 })
 
-module.exports = commentSchema
+const blogIdSchema = Joi.object().keys({
+	blog_id: Joi.string().required()
+})
+
+module.exports = {commentSchema, blogIdSchema}

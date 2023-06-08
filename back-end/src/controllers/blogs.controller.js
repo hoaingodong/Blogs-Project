@@ -1,41 +1,17 @@
-// const blogsRouter = require("express").Router()
-// const middleware = require("../utils/middleware")
-// const { celebrate, Segments } = require("celebrate")
-// const BodyParser = require("body-parser")
-// const blogSchema = require("../validation/blog.validation")
-//
-// blogsRouter.use(BodyParser.json())
-
-// blogsRouter.delete("/:id", middleware.tokenValidator, middleware.userExtractor, async (request, response, next) => {
-// 	try {
-// 		const user = request.user
-// 		const blogToDelete = await Blog.findById(request.params.id)
-//
-// 		if (!blogToDelete) {
-// 			return response.status(400).json({error: "Blog not found"})
-// 		}
-// 		if (blogToDelete.user._id.toString() === user._id.toString()) {
-// 			await Blog.findByIdAndRemove(request.params.id)
-// 			response.status(204).end()
-// 		} else {
-// 			return response.status(401).json({error: "Unauthorized"})
-// 		}
-// 	} catch (exception) {
-// 		next(exception)
-// 	}
-// })
-// module.exports = blogsRouter
-
 const blogService = require("../services/blog.service")
-const getOne = async (request, response) => {
+const getOne = async (request, response, next) => {
 
 	const id = request.params.id
 
-	const blog = await blogService.getOne(id)
-	if (blog) {
-		response.json(blog)
-	} else {
-		return response.status(400).json({error: "Blog not found"})
+	try {
+		const blog = await blogService.getOne(id)
+		if (blog) {
+			response.json(blog)
+		} else {
+			return response.status(404).json({error: "Blog not found"})
+		}}
+	catch(exception) {
+		next(exception)
 	}
 }
 
