@@ -5,13 +5,9 @@ const mongoose = require("mongoose")
 const cors = require("cors")
 const middleware = require("./utils/middleware")
 const logger = require("./utils/logger")
-const loginRouter = require("./routes/login.route")
-const blogsRouter = require("./routes/blog.route")
-const usersRouter = require("./routes/user.route")
-const commentsRouter = require("./routes/comment.route")
 const {errors} = require("celebrate")
 const bodyParser = require("body-parser")
-
+const v1Router = require("./routes/index.route")
 
 mongoose.set("strictQuery", false)
 
@@ -32,10 +28,7 @@ app.use(middleware.requestLogger)
 app.use(middleware.tokenExtractor)
 
 app.use(bodyParser.json())
-app.use("/api/users", usersRouter)
-app.use("/api/login", loginRouter)
-app.use("/api/blogs", blogsRouter)
-app.use("/api/comments", commentsRouter)
+app.use("/api/v1", v1Router)
 app.use(errors())
 
 app.use(middleware.unknownEndpoint)
