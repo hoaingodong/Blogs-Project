@@ -23,3 +23,21 @@ exports.uploads = (file, folder) => {
 		)
 	})
 }
+
+exports.destroy = (id, response) => {
+	return new Promise((resolve) => {
+		cloudinary.uploader
+			.destroy(id)
+			.then((result) => {
+				resolve(result)
+			})
+			.catch((error) => {
+				response.status(500).send({
+					message: "Failure",
+					error,
+				})
+			})
+	})
+}
+
+

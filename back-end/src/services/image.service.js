@@ -12,4 +12,5 @@ const createImage = async (file) => {
 	return urls[0]
 }
 
+
 module.exports = {createImage}

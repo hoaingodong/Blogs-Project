@@ -8,6 +8,7 @@ const upload = require("../config/multer.config")
 
 router.get("/", middleware.tokenValidator, userController.getAll)
 router.post("/", upload.upload.any(), celebrate({[Segments.BODY]:userSchema}),  userController.createNew)
+router.put("/:id", upload.upload.any(), userController.updateUser)
 
 module.exports = router
 

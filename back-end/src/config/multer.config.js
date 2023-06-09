@@ -1,11 +1,11 @@
 const multer = require("multer")
-const path = require("path")
+// const path = require("path")
 
 //multer.diskStorage() creates a storage space for storing files.
 const storage = multer.diskStorage({
-	destination: (req, file, cb) => {
-		cb(null, path.join(__dirname, "../uploads"))
-	},
+	// destination: (req, file, cb) => {
+	// 	cb(null, path.join(__dirname, "../files"))
+	// },
 	filename: function (req, file, cb) {
 		cb(null, new Date().toDateString() + "-" + file.originalname)
 	},
