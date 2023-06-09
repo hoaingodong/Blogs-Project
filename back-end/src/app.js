@@ -8,7 +8,6 @@ const logger = require("./utils/logger")
 const {errors} = require("celebrate")
 const bodyParser = require("body-parser")
 const v1Router = require("./routes/index.route")
-
 mongoose.set("strictQuery", false)
 
 logger.info("connecting to", config.MONGODB_URI)
@@ -22,12 +21,13 @@ mongoose.connect(config.MONGODB_URI)
 	})
 
 app.use(cors())
-app.use(express.json())
+// app.use(express.json())
+app.use(bodyParser.json())
+app.use(bodyParser.urlencoded({ extended: false }))
 
 app.use(middleware.requestLogger)
 app.use(middleware.tokenExtractor)
 
-app.use(bodyParser.json())
 app.use("/api/v1", v1Router)
 app.use(errors())
 
