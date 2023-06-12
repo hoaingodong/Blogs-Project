@@ -1,17 +1,18 @@
 const express = require("express")
 const router = express.Router()
 const blogController = require("../controllers/blogs.controller")
+const middleware = require("../utils/middleware")
 const { celebrate, Segments } = require("celebrate")
 const blogSchema = require("../validation/blog.validation")
 
-router.get("/", blogController.getAll)
+router.get("/", middleware.tokenValidator, middleware.userExtractor, blogController.getAll)
 
-router.get("/:id", blogController.getOne)
+router.get("/:id", middleware.tokenValidator, blogController.getOne)
 
-router.post("/", celebrate({[Segments.BODY]:blogSchema}), blogController.createOne)
+router.post("/", celebrate({[Segments.BODY]:blogSchema}), middleware.tokenValidator, middleware.userExtractor, blogController.createOne)
 
-router.put("/:id", celebrate({[Segments.BODY]:blogSchema}), blogController.update)
+router.put("/:id", celebrate({[Segments.BODY]:blogSchema}), middleware.tokenValidator, blogController.update)
 
-router.delete("/:id", blogController.deleteOne)
+router.delete("/:id", middleware.tokenValidator, middleware.userExtractor, blogController.deleteOne)
 
 module.exports = router

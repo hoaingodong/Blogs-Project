@@ -32,6 +32,7 @@ app.use("/api/v1", v1Router)
 app.use(errors())
 
 app.use(middleware.unknownEndpoint)
+
 app.use(middleware.errorHandler)
 
 module.exports = app

@@ -6,9 +6,7 @@ const login = async (username, password) => {
 
 	const user = await User.findOne({ username })
 
-	const passwordCorrect = user === null
-		? false
-		: await bcrypt.compare(password, user.passwordHash)
+	const passwordCorrect = user.comparePassword(password)
 
 	if (!(user && passwordCorrect)) {
 		throw new Error("invalid username or password")

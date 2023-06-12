@@ -1,5 +1,6 @@
 const mongoose = require("mongoose")
 const uniqueValidator = require("mongoose-unique-validator")
+const bcrypt = require("bcryptjs")
 
 const userSchema = mongoose.Schema({
 	username: {
@@ -41,6 +42,10 @@ userSchema.set("toJSON", {
 		delete returnedObject.passwordHash
 	}
 })
+
+userSchema.methods.comparePassword = async function(password){
+	return await bcrypt.compare(password, this.passwordHash)
+}
 
 const User = mongoose.model("User", userSchema)
 
