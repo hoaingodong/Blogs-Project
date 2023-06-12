@@ -4,9 +4,11 @@ const userController = require("../controllers/users.controller")
 const middleware = require("../utils/middleware")
 const { celebrate, Segments} = require("celebrate")
 const userSchema = require("../validation/user.validation")
+const upload = require("../config/multer.config")
 
 router.get("/", middleware.tokenValidator, userController.getAll)
-router.post("/", celebrate({[Segments.BODY]:userSchema}), userController.createNew)
+router.post("/", upload.upload.any(), celebrate({[Segments.BODY]:userSchema}),  userController.createNew)
+router.put("/:id", upload.upload.any(), userController.updateUser)
 
 module.exports = router
 

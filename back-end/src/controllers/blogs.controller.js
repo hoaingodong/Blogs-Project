@@ -9,7 +9,9 @@ const getOne = async (request, response, next) => {
 			response.json(blog)
 		} else {
 			return response.status(404).json({error: "Blog not found"})
-		}}
+		}
+	}
+
 	catch(exception) {
 		next(exception)
 	}
@@ -75,7 +77,6 @@ const deleteOne = async (request, response, next) => {
 	catch (exception) {
 		next(exception)
 	}
-
 }
 
 module.exports = {

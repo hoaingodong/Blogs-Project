@@ -10,7 +10,13 @@ const createNew = async (user) => {
 	return savedUser
 }
 
+const updateUser = async (id, user) => {
+	const updatedUser = await User.findByIdAndUpdate(id, user)
+	return updatedUser
+}
+
 module.exports = {
 	getAll,
-	createNew
+	createNew,
+	updateUser
 }
