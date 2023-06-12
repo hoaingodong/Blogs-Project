@@ -31,7 +31,7 @@ const errorHandler = (error, request, response, next) => {
 			error: "token expired"
 		})
 	}
-	else if (error.name === "Error") {
+	else if (error.message === "invalid username or password") {
 		return response.status(401).json({
 			error: error.message
 		})
@@ -39,8 +39,9 @@ const errorHandler = (error, request, response, next) => {
 	else {
 		return response.status(502).json({error: "Error Server"})
 	}
+
 	// eslint-disable-next-line no-unreachable
-	next(error)
+	next()
 }
 
 const tokenExtractor = (request, response, next) => {
@@ -75,6 +76,7 @@ const userExtractor = async (request, response, next) => {
 		return response.status(401).json({error: "Unauthorized"})
 	}
 	request["user"] = user
+
 	next()
 }
 

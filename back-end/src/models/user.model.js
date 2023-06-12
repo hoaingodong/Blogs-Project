@@ -1,6 +1,7 @@
 const mongoose = require("mongoose")
 const uniqueValidator = require("mongoose-unique-validator")
 const bcrypt = require("bcryptjs")
+const jwt = require("jsonwebtoken")
 
 const userSchema = mongoose.Schema({
 	username: {
@@ -45,6 +46,14 @@ userSchema.set("toJSON", {
 
 userSchema.methods.comparePassword = async function(password){
 	return await bcrypt.compare(password, this.passwordHash)
+}
+
+userSchema.methods.getJwtToken = async function(){
+	return jwt.sign(
+		{id: this._id, username: this.username},
+		process.env.SECRET,
+		{ expiresIn: 60*60 }
+	)
 }
 
 const User = mongoose.model("User", userSchema)
