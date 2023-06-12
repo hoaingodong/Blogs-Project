@@ -9,7 +9,7 @@ const getOne = async (request, response, next) => {
 		if (comment) {
 			response.json(comment)
 		} else {
-			return response.status(400).json({error: "Comment not found"})
+			return response.status(404).json({error: "Comment not found"})
 		}}
 	catch (exception){
 		next(exception)
@@ -51,7 +51,7 @@ const createOne = async (request, response, next) => {
 
 	const blog = await Blog.findById(body.blog_id)
 	if (!blog) {
-		return response.status(400).json({error: "Blog doesn't exist"})
+		return response.status(404).json({error: "Blog doesn't exist"})
 	}
 
 	const comment = {
@@ -62,8 +62,8 @@ const createOne = async (request, response, next) => {
 	}
 
 	try {
-		const savedBlog = await commentService.createOne(comment, user, blog )
-		response.status(201).json(savedBlog)
+		const savedComment = await commentService.createOne(comment, user, blog )
+		response.status(201).json(savedComment)
 	} catch (exception) {
 		next(exception)
 	}
