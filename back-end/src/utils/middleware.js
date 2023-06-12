@@ -7,7 +7,9 @@ const requestLogger = (request, response, next) => {
 	logger.info("Path:  ", request.path)
 	logger.info("Body:  ", request.body)
 	logger.info("---")
+
 	next()
+
 }
 
 const unknownEndpoint = (request, response) => {
@@ -30,7 +32,7 @@ const errorHandler = (error, request, response, next) => {
 			error: "token expired"
 		})
 	}
-	else if (error.name === "Error") {
+	else if (error.message === "invalid username or password") {
 		return response.status(401).json({
 			error: error.message
 		})
@@ -52,7 +54,7 @@ const tokenExtractor = (request, response, next) => {
 	next()
 }
 
-const tokenValidator = (request, response, next) => {
+const tokenValidator = async (request, response, next) => {
 	const token = request.token
 	if (!token) {
 		return response.status(401).json({error: "token missing"})
@@ -63,17 +65,12 @@ const tokenValidator = (request, response, next) => {
 		return response.status(401).json({error: "invalid token"})
 	}
 
-	next()
-}
-
-const userExtractor = async (request, response, next) => {
-	const token = request.token
-	const decodedToken = jwt.verify(token, process.env.SECRET)
 	const user = await User.findById(decodedToken.id)
 	if (!user){
 		return response.status(401).json({error: "Unauthorized"})
 	}
 	request["user"] = user
+
 	next()
 }
 
@@ -83,5 +80,4 @@ module.exports = {
 	errorHandler,
 	tokenExtractor,
 	tokenValidator,
-	userExtractor,
 }
